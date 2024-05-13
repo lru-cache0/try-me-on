@@ -3,11 +3,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import redis from "../../utils/redis";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth/[...nextauth]";
+import prisma from "../../lib/prismadb";
 
 type Data = string;
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
     imageUrl: string;
+    prompt: string;
   };
 }
 
@@ -15,7 +17,7 @@ interface ExtendedNextApiRequest extends NextApiRequest {
 const ratelimit = redis
   ? new Ratelimit({
       redis: redis,
-      limiter: Ratelimit.fixedWindow(5, "1440 m"),
+      limiter: Ratelimit.fixedWindow(5, "0 m"),
       analytics: true,
     })
   : undefined;
@@ -30,6 +32,33 @@ export default async function handler(
     return res.status(500).json("Login to upload.");
   }
 
+  // Get user from DB
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user.email!,
+    },
+    select: {
+      credits: true,
+    },
+  });
+
+  // Check if user has any credits left
+  if (user?.credits === 0) {
+    return res.status(400).json(`You have no generations left`);
+  }
+
+  // If they have credits, decrease their credits by one and continue
+  await prisma.user.update({
+    where: {
+      email: session.user.email!,
+    },
+    data: {
+      credits: {
+        decrement: 1,
+      },
+    },
+  });
+
   // Rate Limiting by user email
   if (ratelimit) {
     const identifier = session.user.email;
@@ -41,19 +70,26 @@ export default async function handler(
     const diff = Math.abs(
       new Date(result.reset).getTime() - new Date().getTime()
     );
-    const hours = Math.floor(diff / 1000 / 60 / 60);
-    const minutes = Math.floor(diff / 1000 / 60) - hours * 60;
+    //const hours = Math.floor(diff / 1000 / 60 / 60);
+    //const minutes = Math.floor(diff / 1000 / 60) - hours * 60;
+    const hours = 0;
+    const minutes = 0;
 
     if (!result.success) {
       return res
         .status(429)
         .json(
-          `Your generations will renew in ${hours} hours and ${minutes} minutes. Email hassan@hey.com if you have any questions.`
+          `You need more credits!`
         );
     }
   }
 
+  //const versionId = "76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38";
+  const versionId = "854e8727697a057c525cdb45ab037f64ecca770a1769cc52287c2e56472a247b";
   const imageUrl = req.body.imageUrl;
+  const prompt = req.body.prompt;
+  const negativePrompt = "worst quality, low quality, lowres, watermark, banner, logo, watermark, contactinfo, text, deformed, blurry, blur, out of focus, out of frame, surreal, extra, ugly, upholstered walls, fabric walls, plush walls, mirror, mirrored, functional";
+  const aPrompt = "room, bedroom, bathroom, kitchen, dining room, realistic";
   // POST request to Replicate to start the image restoration generation process
   let startResponse = await fetch("https://api.replicate.com/v1/predictions", {
     method: "POST",
@@ -62,9 +98,8 @@ export default async function handler(
       Authorization: "Token " + process.env.REPLICATE_API_KEY,
     },
     body: JSON.stringify({
-      version:
-        "9283608cc6b7be6b65a8e44983db012355fde4132009bf99d976b2f0896856a3",
-      input: { img: imageUrl, version: "v1.4", scale: 2 },
+      version: versionId,
+      input: { image: imageUrl, prompt: prompt, a_prompt: aPrompt, n_prompt: negativePrompt},
     }),
   });
 

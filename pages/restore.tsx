@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { UrlBuilder } from '@bytescale/sdk';
 import {
   UploadWidgetConfig,
@@ -24,6 +24,7 @@ import { Rings } from 'react-loader-spinner';
 const Home: NextPage = () => {
   const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
   const [restoredImage, setRestoredImage] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [restoredLoaded, setRestoredLoaded] = useState<boolean>(false);
   const [sideBySide, setSideBySide] = useState<boolean>(false);
@@ -57,10 +58,14 @@ const Home: NextPage = () => {
         return { errorMessage: 'Detected a NSFW image which is not allowed.' };
       }
       if (data.remainingGenerations === 0) {
-        return { errorMessage: 'No more generations left for the day.' };
+        return { errorMessage: 'You have no remaining credits.' };
       }
       return undefined;
     },
+  };
+
+  const handlePrompt = (event: ChangeEvent<HTMLInputElement>) => {
+    setPrompt(event.target.value); // Update state with the current value
   };
 
   const UploadDropZone = () => (
@@ -80,7 +85,7 @@ const Home: NextPage = () => {
           });
           setPhotoName(imageName);
           setOriginalPhoto(imageUrl);
-          generatePhoto(imageUrl);
+          //generatePhoto(imageUrl);
         }
       }}
       width="670px"
@@ -88,7 +93,7 @@ const Home: NextPage = () => {
     />
   );
 
-  async function generatePhoto(fileUrl: string) {
+  async function generatePhoto(fileUrl: string, prompt: string) {
     await new Promise((resolve) => setTimeout(resolve, 500));
     setLoading(true);
 
@@ -97,15 +102,15 @@ const Home: NextPage = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ imageUrl: fileUrl }),
+      body: JSON.stringify({ imageUrl: fileUrl, prompt: prompt }),
     });
 
     let newPhoto = await res.json();
     if (res.status !== 200) {
-      setError(newPhoto);
+      setError(newPhoto[1]);
     } else {
       mutate();
-      setRestoredImage(newPhoto);
+      setRestoredImage(newPhoto[1]);
     }
     setLoading(false);
   }
@@ -113,47 +118,24 @@ const Home: NextPage = () => {
   return (
     <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <Head>
-        <title>Restore Photos</title>
+        <title>AI Interior Designer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header photo={session?.user?.image || undefined} />
+      <Header photo={session?.user?.image || undefined} gens={data?.remainingGenerations ? Number(data.remainingGenerations) : 0} />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
-        <a
-          className="border shadow-xl flex max-w-md rounded-xl mb-6 hover:scale-[1.02] transition duration-300 ease-in-out"
-          href="https://www.roomgpt.io/"
-          target="_blank"
-          onClick={() => va.track('RoomGPT link clicked')}
-        >
-          <img
-            src="/roomgpt-ad.png"
-            alt="roomgpt ad"
-            className="w-48 rounded-lg"
-          />
-          <div className="flex gap-3 flex-col py-3 sm:pr-4 pr-2">
-            <h3 className="text-left sm:text-md text-sm text-gray-700">
-              Revolutionize your space with the world's first AI interior
-              designer, 100% free to try.{' '}
-            </h3>
-            <p className="text-left sm:text-sm text-xs text-gray-500 opacity-50 font-medium">
-              ROOMGPT.IO
-            </p>
-          </div>
-        </a>
+      
         <h1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-900 sm:text-6xl mb-5">
-          Restore any face photo
+          Redesign rooms with AI
         </h1>
         {status === 'authenticated' && data && (
           <p className="text-slate-500">
             You have{' '}
             <span className="font-semibold">
-              {data.remainingGenerations} generations
+              {data?.remainingGenerations}{" "}
+              {data?.remainingGenerations > 1 ? "credits" : "credit"}
             </span>{' '}
-            left today. Your generation
-            {Number(data.remainingGenerations) > 1 ? 's' : ''} will renew in{' '}
-            <span className="font-semibold">
-              {data.hours} hours and {data.minutes} minutes.
-            </span>
+            left. 
           </p>
         )}
         <div className="flex justify-between items-center w-full flex-col mt-4">
@@ -184,7 +166,7 @@ const Home: NextPage = () => {
           ) : status === 'authenticated' && !originalPhoto ? (
             <UploadDropZone />
           ) : (
-            !originalPhoto && (
+            status === 'unauthenticated' && !originalPhoto && (
               <div className="h-[250px] flex flex-col items-center space-y-6 max-w-[670px] -mt-8">
                 <div className="max-w-xl text-gray-600">
                   Sign in below with Google to create a free account and restore
@@ -207,14 +189,40 @@ const Home: NextPage = () => {
             )
           )}
           {originalPhoto && !restoredImage && (
-            <Image
-              alt="original photo"
-              src={originalPhoto}
-              className="rounded-2xl"
-              width={475}
-              height={475}
-            />
+              <Image
+                alt="original photo"
+                src={originalPhoto}
+                className="rounded-2xl"
+                width={400}
+                height={400}
+              />
           )}
+          {status === 'authenticated' && (
+          <div>
+          <label htmlFor="textInput"></label>
+            <input
+              type="text"
+              id="textInput"
+              value={prompt} // Controlled input
+              onChange={handlePrompt} // Update state on change
+              placeholder=" Describe what you want to change..."
+              style={{ width: '650px', height: '40px', fontSize: '16px', border: '1px solid #ccc', marginTop: '15px' }}
+           />
+          </div>
+          )}
+        
+    
+
+        {originalPhoto && prompt && (
+          <button 
+            onClick={() => {
+              generatePhoto(originalPhoto, prompt);
+            }}
+            className="bg-black rounded-full text-white font-medium px-4 py-2 mt-4 hover:bg-black/80 transition">
+            Go!
+          </button>
+        )}
+
           {restoredImage && originalPhoto && !sideBySide && (
             <div className="flex sm:space-x-4 sm:flex-row flex-col">
               <div>
@@ -258,10 +266,10 @@ const Home: NextPage = () => {
               role="alert"
             >
               <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
-                Please try again in 24 hours
+                <a href="/buy-credits">You need more credits! Buy more here.</a>
               </div>
               <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
-                {error}
+                <a href="/buy-credits">Buy Credits</a>
               </div>
             </div>
           )}
@@ -274,7 +282,7 @@ const Home: NextPage = () => {
                   setRestoredLoaded(false);
                   setError(null);
                 }}
-                className="bg-black rounded-full text-white font-medium px-4 py-2 mt-8 hover:bg-black/80 transition"
+                className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-6 hover:bg-gray-100 transition"
               >
                 Upload New Photo
               </button>
@@ -284,7 +292,7 @@ const Home: NextPage = () => {
                 onClick={() => {
                   downloadPhoto(restoredImage!, appendNewToName(photoName!));
                 }}
-                className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-8 hover:bg-gray-100 transition"
+                className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-6 hover:bg-gray-100 transition"
               >
                 Download Restored Photo
               </button>

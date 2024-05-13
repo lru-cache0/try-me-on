@@ -1,7 +1,6 @@
 datasource db {
   provider          = "postgresql"
   url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 generator client {
@@ -21,8 +20,7 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -36,13 +34,17 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
+  credits       Int        @default(3)
+  location      String?
   accounts      Account[]
   sessions      Session[]
+  rooms         Room[]
+  purchases     Purchase[]
 }
 
 model VerificationToken {
@@ -51,4 +53,27 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Room {
+  id          String   @id @default(cuid())
+  replicateId String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inputImage  String
+  outputImage String
+  prompt      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([replicateId, userId])
+}
+
+model Purchase {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creditAmount Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
