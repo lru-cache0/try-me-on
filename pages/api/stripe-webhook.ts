@@ -14,7 +14,7 @@ export const config = {
   },
 };
 
-const webhookSecret: string = process.env.STRIPE_API_SECRET || "";
+const webhookSecret: string = process.env.STRIPE_WEBHOOK_SECRET || "";
 
 const cors = Cors({
   allowMethods: ["POST", "HEAD"],
@@ -75,7 +75,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         data: {
           credits: {
-            increment: creditAmount,
+            increment: 100,
           },
         },
       });
