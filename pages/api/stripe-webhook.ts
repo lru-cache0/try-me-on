@@ -22,6 +22,7 @@ const cors = Cors({
 
 const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
+    console.log("Webhook received");
     const buf = await buffer(req);
     const sig = req.headers["stripe-signature"]!;
 
@@ -75,7 +76,7 @@ const webhookHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         data: {
           credits: {
-            increment: 100,
+            increment: creditAmount,
           },
         },
       });
