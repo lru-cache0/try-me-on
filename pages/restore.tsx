@@ -205,7 +205,7 @@ const Home: NextPage = () => {
               id="textInput"
               value={prompt} // Controlled input
               onChange={handlePrompt} // Update state on change
-              placeholder=" Describe your ideal room..."
+              placeholder=" Describe your redesign..."
               style={{ width: '350px', height: '40px', fontSize: '16px', border: '1px solid #ccc', marginTop: '15px', padding: '10px'}}
            />
           </div>
