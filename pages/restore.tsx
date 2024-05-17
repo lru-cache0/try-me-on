@@ -206,7 +206,7 @@ const Home: NextPage = () => {
               value={prompt} // Controlled input
               onChange={handlePrompt} // Update state on change
               placeholder=" Describe what you want to change..."
-              style={{ width: '650px', height: '40px', fontSize: '16px', border: '1px solid #ccc', marginTop: '15px' }}
+              style={{ width: '400px', height: '40px', fontSize: '16px', border: '1px solid #ccc', marginTop: '15px' }}
            />
           </div>
           )}
