@@ -12,6 +12,14 @@ export default function Footer() {
         >
           Replicate{' '}
         </a>
+        and {' '}
+        <a
+          href="https://twitter.com/nutlope/status/1696534532709872072"
+          target="_blank"
+          className="font-bold transition hover:text-black/50"
+        >
+           Nutlope{' '}
+        </a>
       </div>
     </footer>
   );

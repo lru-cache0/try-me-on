@@ -126,7 +126,7 @@ export default function Pricing() {
       </ul>
       <p className="text-gray-400 mb-5">
         Any pricing questions? Email{" "}
-        <span className="text-gray-300">shridharathinarayanan@gmail.com</span>
+        <span className="text-gray-300">lrucache0@gmail.com</span>
       </p>
       <Footer />
     </div>
