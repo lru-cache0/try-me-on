@@ -24,14 +24,15 @@ export default function Header({ photo, gens }: HeaderProps) {
 
       <Link
         href="/buy-credits"
-        className="border-r border-gray-300 pr-4 flex space-x-2 hover:text-blue-400 transition"
+        className="flex space-x-2 hover:text-blue-400 transition"
       >
         <div>Buy Credits</div>
       </Link>
         
       {photo ? (
       <div className="flex space-x-6 items-center">
-        <div><b>{gens}</b> credits left</div>
+        <div><b>{gens}</b> credits left</div> 
+            
         <Image
           alt="Profile picture"
           src={photo}
