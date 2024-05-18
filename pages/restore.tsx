@@ -107,7 +107,7 @@ const Home: NextPage = () => {
 
     let newPhoto = await res.json();
     if (res.status !== 200) {
-      setError(newPhoto[1]);
+      setError("Failed to process image.");
     } else {
       mutate();
       setRestoredImage(newPhoto[1]);

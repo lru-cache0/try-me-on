@@ -14,6 +14,7 @@ interface ExtendedNextApiRequest extends NextApiRequest {
 }
 
 // Create a new ratelimiter, that allows 5 requests per day
+/*
 const ratelimit = redis
   ? new Ratelimit({
       redis: redis,
@@ -21,6 +22,7 @@ const ratelimit = redis
       analytics: true,
     })
   : undefined;
+*/
 
 export default async function handler(
   req: ExtendedNextApiRequest,
@@ -48,6 +50,7 @@ export default async function handler(
   }
 
   // If they have credits, decrease their credits by one and continue
+  /*
   await prisma.user.update({
     where: {
       email: session.user.email!,
@@ -58,8 +61,10 @@ export default async function handler(
       },
     },
   });
+  */
 
   // Rate Limiting by user email
+  /*
   if (ratelimit) {
     const identifier = session.user.email;
     const result = await ratelimit.limit(identifier!);
@@ -83,6 +88,7 @@ export default async function handler(
         );
     }
   }
+  */
 
   //const versionId = "76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38";
   const versionId = "854e8727697a057c525cdb45ab037f64ecca770a1769cc52287c2e56472a247b";
@@ -121,8 +127,19 @@ export default async function handler(
     let jsonFinalResponse = await finalResponse.json();
 
     if (jsonFinalResponse.status === "succeeded") {
+      await prisma.user.update({
+        where: {
+          email: session.user.email!,
+        },
+        data: {
+          credits: {
+            decrement: 1,
+          },
+        },
+      });
       restoredImage = jsonFinalResponse.output;
     } else if (jsonFinalResponse.status === "failed") {
+      console.log("failed");
       break;
     } else {
       await new Promise((resolve) => setTimeout(resolve, 1000));
