@@ -96,6 +96,8 @@ export default async function handler(
   const prompt = req.body.prompt;
   const negativePrompt = "illustration, painting, cartoon, worst quality, low quality, lowres, watermark, banner, logo, watermark, contactinfo, text, deformed, blurry, blur, out of focus, out of frame, surreal, extra, ugly, upholstered walls, fabric walls, plush walls, mirror, mirrored, functional";
   const aPrompt = "room, bedroom, bathroom, kitchen, dining room, realistic";
+  const timeoutDuration = 12000;
+  
   // POST request to Replicate to start the image restoration generation process
   let startResponse = await fetch("https://api.replicate.com/v1/predictions", {
     method: "POST",
@@ -125,6 +127,7 @@ export default async function handler(
       },
     });
     let jsonFinalResponse = await finalResponse.json();
+    console.log(jsonFinalResponse)
 
     if (jsonFinalResponse.status === "succeeded") {
       await prisma.user.update({
