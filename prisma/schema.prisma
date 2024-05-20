@@ -39,7 +39,7 @@ model User {
   email         String?    @unique
   emailVerified DateTime?
   image         String?
-  credits       Int        @default(3)
+  credits       Int        @default(1)
   location      String?
   accounts      Account[]
   sessions      Session[]
