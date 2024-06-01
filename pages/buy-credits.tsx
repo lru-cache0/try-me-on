@@ -42,6 +42,7 @@ export default function Pricing() {
       <div className="w-full">
         {session?.user?.email && (
           // @ts-ignore
+          //trigger redeployment
           <stripe-pricing-table
             pricing-table-id="prctbl_1PLIfmEIPzBxp1oY6ueSxCDp"
             publishable-key="pk_live_51PDyCAEIPzBxp1oYvh8jWpsY4Aj3sPXzkx0nRcRzfyOC95ouUtfDxMH9dzNE93zSCwxFadvnS5ywO9ye5msDGpZv00hQ53Xmsl"
