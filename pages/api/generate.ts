@@ -95,7 +95,7 @@ export default async function handler(
   const imageUrl = req.body.imageUrl;
   const prompt = req.body.prompt;
   const negativePrompt = "illustration, painting, cartoon, worst quality, low quality, lowres, watermark, banner, logo, watermark, contactinfo, text, deformed, blurry, blur, out of focus, out of frame, surreal, extra, ugly, upholstered walls, fabric walls, plush walls, mirror, mirrored, functional";
-  const aPrompt = "room, bedroom, bathroom, kitchen, dining room, realistic";
+  const aPrompt = "room, bedroom, bathroom, kitchen, dining room, realistic, cinematic photo, highly detailed, cinematic lighting, ultra-detailed, ultrarealistic, photorealism, 8k., masterpiece, cinematic light, ultrarealistic+, photorealistic+, 8k, raw photo, realistic, hyperrealistic, highest quality, best quality, highly detailed, masterpiece, best quality, extremely detailed 8k wallpaper, masterpiece, best quality, ultra-detailed, best shadow, detailed background, high contrast, best illumination, detailed face, dulux, caustic, dynamic angle, detailed glow. dramatic lighting, highly detailed, insanely detailed hair, symmetrical, intricate details, professionally retouched, 8k high definition. strong bokeh. award winning photo.";
   const timeoutDuration = 12000;
   
   // POST request to Replicate to start the image restoration generation process
