@@ -42,7 +42,7 @@ export default function Pricing() {
       <div className="w-full">
         {session?.user?.email && (
           // @ts-ignore
-          //trigger-redeployment
+          //trigger
           <stripe-pricing-table
             pricing-table-id="prctbl_1PLIfmEIPzBxp1oY6ueSxCDp"
             publishable-key="pk_live_51PDyCAEIPzBxp1oYvh8jWpsY4Aj3sPXzkx0nRcRzfyOC95ouUtfDxMH9dzNE93zSCwxFadvnS5ywO9ye5msDGpZv00hQ53Xmsl"
@@ -59,7 +59,7 @@ export default function Pricing() {
       <ul
         role="list"
         className="mt-8 grid grid-cols-1 gap-4 leading-6 text-gray-400 sm:grid-cols-2 sm:gap-6 mb-10"
-      >
+      > 
         
 
 
