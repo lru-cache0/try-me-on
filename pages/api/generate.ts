@@ -143,7 +143,7 @@ export default async function handler(
         },
       });
       restoredImage = jsonFinalResponse.output;
-    } else if (jsonFinalResponse.status === "failed" || (Date.now() - pollingStartTime) >= timeoutDuration) {
+    } else if (jsonFinalResponse.status === "failed") {
       console.log("failed");
       break;
     } else {
