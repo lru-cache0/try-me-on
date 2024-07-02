@@ -57,7 +57,7 @@ const Home: NextPage = () => {
       if (!isSafe) {
         return { errorMessage: 'Detected a NSFW image which is not allowed.' };
       }
-      if (data.remainingGenerations === 0) {
+      if (data.remainingGenerations <= 0) {
         return { errorMessage: 'You have no remaining credits.' };
       }
       return undefined;
@@ -214,6 +214,7 @@ const Home: NextPage = () => {
         {originalPhoto && prompt && (
           <button 
             onClick={() => {
+              setError(null);
               generatePhoto(originalPhoto, prompt);
             }}
             className="bg-black rounded-full text-white font-medium px-4 py-2 mt-4 hover:bg-black/80 transition">
@@ -248,6 +249,16 @@ const Home: NextPage = () => {
               </div>
             </div>
           )}
+
+          {error && originalPhoto && !sideBySide && (
+            <div className="flex sm:space-x-4 sm:flex-row flex-col">
+              <div>
+
+                <h2 className="mb-1 font-medium text-lg mt-8">Failed to process image — try again!</h2>
+              </div>
+            </div>
+          )}
+
           {loading && (
             <button
               disabled
@@ -258,7 +269,7 @@ const Home: NextPage = () => {
               </span>
             </button>
           )}
-          {error && (
+          {data &&data.remainingGenerations <= 0 && (
             <div
               className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mt-8 max-w-[575px]"
               role="alert"

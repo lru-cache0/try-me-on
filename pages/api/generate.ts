@@ -45,7 +45,7 @@ export default async function handler(
   });
 
   // Check if user has any credits left
-  if (user?.credits === 0) {
+  if (!user || user?.credits <= 0) {
     return res.status(400).json(`You have no generations left`);
   }
 
@@ -96,7 +96,7 @@ export default async function handler(
   const prompt = req.body.prompt;
   const negativePrompt = "illustration, painting, cartoon, worst quality, low quality, lowres, watermark, banner, logo, watermark, contactinfo, text, deformed, blurry, blur, out of focus, out of frame, surreal, extra, ugly, upholstered walls, fabric walls, plush walls, mirror, mirrored, functional";
   const aPrompt = "room, bedroom, bathroom, kitchen, dining room, realistic, cinematic photo, highly detailed, cinematic lighting, ultra-detailed, ultrarealistic, photorealism, 8k., masterpiece, cinematic light, ultrarealistic+, photorealistic+, 8k, raw photo, realistic, hyperrealistic, highest quality, best quality, highly detailed, masterpiece, best quality, extremely detailed 8k wallpaper, masterpiece, best quality, ultra-detailed, best shadow, detailed background, high contrast, best illumination, detailed face, dulux, caustic, dynamic angle, detailed glow. dramatic lighting, highly detailed, insanely detailed hair, symmetrical, intricate details, professionally retouched, 8k high definition. strong bokeh. award winning photo.";
-  const timeoutDuration = 12000;
+  const timeoutDuration = 14000;
   
   // POST request to Replicate to start the image restoration generation process
   let startResponse = await fetch("https://api.replicate.com/v1/predictions", {
@@ -116,6 +116,8 @@ export default async function handler(
 
   // GET request to get the status of the image restoration process & return the result when it's ready
   let restoredImage: string | null = null;
+  const pollingStartTime = Date.now();
+
   while (!restoredImage) {
     // Loop in 1s intervals until the alt text is ready
     console.log("polling for result...");
@@ -141,14 +143,21 @@ export default async function handler(
         },
       });
       restoredImage = jsonFinalResponse.output;
-    } else if (jsonFinalResponse.status === "failed") {
+    } else if (jsonFinalResponse.status === "failed" || (Date.now() - pollingStartTime) >= timeoutDuration) {
       console.log("failed");
       break;
     } else {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
-  res
+  if (restoredImage) {
+    res
     .status(200)
-    .json(restoredImage ? restoredImage : "Failed to restore image");
+    .json(restoredImage)
+  }
+  else {
+    res
+    .status(400)
+    .json("fail");
+  }
 }
