@@ -44,7 +44,7 @@ export default function Pricing() {
           // @ts-ignore
           //trigger
           <stripe-pricing-table
-            pricing-table-id="prctbl_1PLIfmEIPzBxp1oY6ueSxCDp"
+            pricing-table-id="prctbl_1PHCBtEIPzBxp1oYHRAxyUPl"
             publishable-key="pk_live_51PDyCAEIPzBxp1oYvh8jWpsY4Aj3sPXzkx0nRcRzfyOC95ouUtfDxMH9dzNE93zSCwxFadvnS5ywO9ye5msDGpZv00hQ53Xmsl"
             client-reference-id={session.user.email}
             customer-email={session.user.email}
@@ -76,7 +76,7 @@ export default function Pricing() {
               clipRule="evenodd"
             />
           </svg>
-          Premium support by email
+          Premium support by email 
         </li>
 
         <li className="flex gap-x-3">
