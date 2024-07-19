@@ -62,7 +62,7 @@ export default async function handler(
     },
     select: {
       credits: true,
-      location: true,
+      location: true, //r
     },
   });
 
