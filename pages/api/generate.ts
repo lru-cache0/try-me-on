@@ -107,7 +107,7 @@ export default async function handler(
     },
     body: JSON.stringify({
       version: versionId,
-      input: { image: imageUrl, prompt: prompt, a_prompt: aPrompt, n_prompt: negativePrompt},
+      input: { image: imageUrl, prompt: prompt, n_prompt: negativePrompt},
     }),
   });
 
