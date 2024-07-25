@@ -34,8 +34,12 @@ const Home: NextPage = () => {
             Try me!
           </Link>
         </div>
+
+        <p className="text-slate-500 mt-8" style={{ fontSize: '1.5rem', marginBottom: '4rem' }}> 
+        <strong> Check out this week's <a href="https://amzn.to/4djymqV" target="_blank" rel="noopener noreferrer" style={{ color: '#0320fc' }}>featured product</a>! </strong>
+        </p>
        
-        <div className="flex justify-between items-center w-full flex-col sm:mt-10 mt-6">
+        <div className="flex justify-between items-center w-full flex-col">
           <div className="flex flex-col space-y-10 mt-4">
             <div className="flex sm:space-x-2 sm:flex-row flex-col">
               <div>
