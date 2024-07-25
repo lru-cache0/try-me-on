@@ -124,10 +124,9 @@ const Home: NextPage = () => {
 
       <Header photo={session?.user?.image || undefined} gens={data?.remainingGenerations ? Number(data.remainingGenerations) : 0} />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
-      
-        <h1 className="mx-auto max-w-4xl font-display text-4xl font-bold tracking-normal text-slate-900 sm:text-6xl mb-5">
-          Redesign rooms with AI
-        </h1>
+      <p className="text-slate-500 mb-3" style={{ fontSize: '2rem', marginBottom: '4rem' }}> 
+        <strong> Check out this week's <a href="https://amzn.to/4djymqV" target="_blank" rel="noopener noreferrer" style={{ color: '#0320fc' }}>featured product</a>! </strong>
+      </p>
         {status === 'authenticated' && data && (
           <p className="text-slate-500">
             You have{' '}
