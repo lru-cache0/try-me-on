@@ -45,7 +45,7 @@ const Home: NextPage = () => {
               <div>
                 <h2 className="mb-1 font-medium text-lg ">Original Photo</h2>
                 <Image
-                  alt="Original"
+                  alt="Original" //
                   src="/old.png"
                   className="w-160 h-75 rounded-2xl mr-4"
                   width={500}
