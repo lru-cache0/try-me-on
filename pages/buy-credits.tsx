@@ -26,7 +26,7 @@ export default function Pricing() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-4xl text-center">
             <p className="mt-2 text-4xl font-bold tracking-tight text-black sm:text-5xl">
-              Buy Room Genius Credits
+              Buy TryMeOn AI Credits
             </p>
           </div>
         </div>
@@ -44,8 +44,8 @@ export default function Pricing() {
           // @ts-ignore
           //trigger
           <stripe-pricing-table
-            pricing-table-id="prctbl_1PZduLEIPzBxp1oYmtipzmSS"
-            publishable-key="pk_live_51PDyCAEIPzBxp1oYvh8jWpsY4Aj3sPXzkx0nRcRzfyOC95ouUtfDxMH9dzNE93zSCwxFadvnS5ywO9ye5msDGpZv00hQ53Xmsl"
+            pricing-table-id="prctbl_1PrWnsGkzKhYP5xazMTTnFQC"
+            publishable-key="pk_live_51PrR0DGkzKhYP5xamf2TrlaffEHpWGrDru8eE3hZk3L6REYFjUKw0FVMdvsNm4Ytcvn8zoZi8f8JSOOPgWn5b54s001nDeoIxm"
             client-reference-id={session.user.email}
             customer-email={session.user.email}
           />

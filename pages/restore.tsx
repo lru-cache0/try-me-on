@@ -291,7 +291,7 @@ const Home: NextPage = () => {
             status === 'unauthenticated' && !you && (
               <div className="h-[250px] flex flex-col items-center space-y-6 max-w-[670px] -mt-8">
                 <div className="max-w-xl text-gray-600">
-                  Sign in below with Google to create a free account and start designing your dream room!
+                  Sign in below with Google to get started!
                 </div>
                 <button
                   onClick={() => signIn('google')}
