@@ -8,27 +8,27 @@ class MyDocument extends Document {
           <link rel="icon" href="/favicon.ico" />
           <meta
             name="description"
-            content="Your AI Interior Designer."
+            content="Your AI Wardrobe Assistant"
           />
-          <meta property="og:site_name" content="room-genius-xi.vercel.app" />
+          <meta property="og:site_name" content="try-me-on.vercel.app" />
           <meta
             property="og:description"
             content="Your AI Interior Designer."
           />
-          <meta property="og:title" content="AI Interior Designer" />
+          <meta property="og:title" content="AI Clothes Try-On" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="AI Interior Designer" />
+          <meta name="twitter:title" content="AI Clothes Try-On" />
           <meta
             name="twitter:description"
-            content="Your AI Interior Designer."
+            content="Try on clothes with AI."
           />
           <meta
             property="og:image"
-            content="https://room-genius-xi.vercel.app/og-image.png"
+            content="https://room-genius-xi.vercel.app/olivia.png"
           />
           <meta
             name="twitter:image"
-            content="https://room-genius-xi.vercel.app/og-image.png"
+            content="https://room-genius-xi.vercel.app/olivia.png"
           />
         </Head>
         <body>
