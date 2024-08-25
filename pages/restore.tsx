@@ -253,6 +253,7 @@ const Home: NextPage = () => {
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-20">
 
         <div className="flex justify-between items-center w-full flex-col mt-4">
+       
         
           {status === 'loading' ? (
             <div className="max-w-[670px] h-[250px] flex justify-center items-center">
@@ -291,7 +292,7 @@ const Home: NextPage = () => {
             status === 'unauthenticated' && !you && (
               <div className="h-[250px] flex flex-col items-center space-y-6 max-w-[670px] -mt-8">
                 <div className="max-w-xl text-gray-600">
-                  Sign in below with Google to get started!
+                  Sign in below with Google to get started trying on your dream wardrobe!
                 </div>
                 <button
                   onClick={() => signIn('google')}
