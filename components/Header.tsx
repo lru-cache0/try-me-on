@@ -18,7 +18,7 @@ export default function Header({ photo, gens }: HeaderProps) {
           height={20}
         />
         <h1 className="sm:text-2xl text-xl font-bold ml-2 tracking-tight">
-          room genius
+          try me on AI
         </h1>
       </Link>
 

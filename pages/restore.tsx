@@ -1,4 +1,5 @@
 import { NextPage } from 'next';
+import React from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { ChangeEvent, useState } from 'react';
@@ -20,16 +21,18 @@ import va from '@vercel/analytics';
 import { useSession, signIn } from 'next-auth/react';
 import useSWR from 'swr';
 import { Rings } from 'react-loader-spinner';
+import { useEffect } from 'react';
 
 const Home: NextPage = () => {
-  const [originalPhoto, setOriginalPhoto] = useState<string | null>(null);
+  const [you, setYou] = useState<string | null>(null);
+  const [clothing, setClothing] = useState<string | null>(null);
   const [restoredImage, setRestoredImage] = useState<string | null>(null);
-  const [prompt, setPrompt] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [restoredLoaded, setRestoredLoaded] = useState<boolean>(false);
   const [sideBySide, setSideBySide] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [photoName, setPhotoName] = useState<string | null>(null);
+  const [youName, setYouName] = useState<string | null>(null);
+  const [clothingName, setClothingName] = useState<string | null>(null);
 
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const { data, mutate } = useSWR('/api/remaining', fetcher);
@@ -65,12 +68,61 @@ const Home: NextPage = () => {
     },
   };
 
-  const handlePrompt = (event: ChangeEvent<HTMLInputElement>) => {
-    setPrompt(event.target.value); // Update state with the current value
-  };
+  useEffect(() => {
+    if (loading) {
+      setRestoredImage(null);
+      setRestoredLoaded(false);
+    }
+  }, [loading]);
 
-  const UploadDropZone = () => (
-    <UploadDropzone
+
+  const Result = () => {
+    return <div>
+       {restoredImage && !sideBySide && (     
+        <div className="sm:mt-0 mt-8">
+          <a href={restoredImage} target="_blank" rel="noreferrer">
+            <Image
+              alt="your look"
+              src={restoredImage}
+              className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in h-[300px] w-auto object-contain"
+              height={200}
+              width={200}
+              onLoadingComplete={() => setRestoredLoaded(true)}
+            />
+          </a>
+        </div>
+        )}
+        <p className="mt-2 text-center">{"Your Look!"}</p>
+          {restoredLoaded && (
+            <button
+              onClick={() => {
+                downloadPhoto(restoredImage!, appendNewToName(youName!));
+              }}
+              className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-6 hover:bg-gray-100 transition"
+            >
+              Download
+            </button>
+          )}
+         {loading && (
+            <button
+              disabled
+              className="bg-black rounded-full text-white font-medium px-4 pt-2 pb-3 mt-8 hover:bg-black/80 w-40"
+            >
+              <span className="pt-4">
+                <LoadingDots color="white" style="large" />
+              </span>
+            </button>
+            
+          )}
+    </div>
+  }  
+  
+  interface UploadDropZoneProps {
+    caption: string;
+  }
+  const YouDropZone: React.FC<UploadDropZoneProps> = ({ caption}) => (
+    <div className="flex flex-col items-center">
+    {!you && <UploadDropzone
       options={options}
       onUpdate={({ uploadedFiles }) => {
         if (uploadedFiles.length !== 0) {
@@ -84,17 +136,91 @@ const Home: NextPage = () => {
               transformationPreset: 'thumbnail',
             },
           });
-          setPhotoName(imageName);
-          setOriginalPhoto(imageUrl);
-          //generatePhoto(imageUrl);
+          setYou(imageUrl);
+          setYouName(imageName)
         }
       }}
-      width="670px"
-      height="250px"
-    />
+      width="200px"
+      height="300px"
+      />
+    }
+    {you &&  
+        <Image
+          alt="restored photo"
+          src={you ?? ''}
+          className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in object-cover"
+          width={200}
+          height={200}
+        />}
+    <p className="mt-2 text-center">{caption}</p>
+    {!loading && you &&  (
+      <button
+        onClick={() => {
+          setYou(null);
+          setRestoredImage(null);
+          setRestoredLoaded(false);
+          setError(null);
+        }}
+        className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-6 hover:bg-gray-100 transition"
+      >
+        Change Photo
+      </button>
+    )}
+    </div>
   );
 
-  async function generatePhoto(fileUrl: string, prompt: string) {
+
+  const ClothingDropZone: React.FC<UploadDropZoneProps> = ({ caption}) => (
+    <div className="flex flex-col items-center">
+    {!clothing && <UploadDropzone
+      options={options}
+      onUpdate={({ uploadedFiles }) => {
+        if (uploadedFiles.length !== 0) {
+          const image = uploadedFiles[0];
+          const imageName = image.originalFile.originalFileName;
+          const imageUrl = UrlBuilder.url({
+            accountId: image.accountId,
+            filePath: image.filePath,
+            options: {
+              transformation: 'preset',
+              transformationPreset: 'thumbnail',
+            },
+          });
+          setClothing(imageUrl);
+          setClothingName(imageName);
+          }
+        }}
+      width="200px"
+      height="300px"
+      />
+    }
+    {clothing &&  
+        <Image
+          alt="restored photo"
+          src={clothing ?? ''}
+          className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in object-cover"
+          width={200}
+          height={200}
+        />}
+    <p className="mt-2 text-center">{caption}</p>
+    {!loading && clothing &&  (
+      <button
+        onClick={() => {
+          setClothing(null);
+          setRestoredImage(null);
+          setRestoredLoaded(false);
+          setError(null);
+        }}
+        className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-6 hover:bg-gray-100 transition"
+      >
+        Change Photo
+      </button>
+    )}
+    </div>
+  );
+
+
+  async function generatePhoto(youUrl: string, clothingUrl: string) {
     await new Promise((resolve) => setTimeout(resolve, 500));
     setLoading(true);
 
@@ -103,7 +229,7 @@ const Home: NextPage = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ imageUrl: fileUrl, prompt: prompt }),
+      body: JSON.stringify({ youUrl: youUrl, clothingUrl: clothingUrl }),
     });
 
     let newPhoto = await res.json();
@@ -111,7 +237,7 @@ const Home: NextPage = () => {
       setError("Failed to process image.");
     } else {
       mutate();
-      setRestoredImage(newPhoto[1]);
+      setRestoredImage(newPhoto);
     }
     setLoading(false);
   }
@@ -124,32 +250,10 @@ const Home: NextPage = () => {
       </Head>
 
       <Header photo={session?.user?.image || undefined} gens={data?.remainingGenerations ? Number(data.remainingGenerations) : 0} />
-      <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-8">
-      <p className=" mb-3" style={{ fontSize: '3rem', marginBottom: '1rem' }}> 
-        <strong> Redesign Rooms with AI </strong>
-      </p>
-        {status === 'authenticated' && data && (
-          <p className="text-slate-500">
-            You have{' '}
-            <span className="font-semibold">
-              {data?.remainingGenerations}{" "}
-              {data?.remainingGenerations > 1 ? "credits" : "credit"}
-            </span>{' '}
-            left. 
-          </p>
-        )}
+      <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-4 sm:mb-0 mb-20">
+
         <div className="flex justify-between items-center w-full flex-col mt-4">
-          <Toggle
-            className={`${restoredLoaded ? 'visible mb-6' : 'invisible'}`}
-            sideBySide={sideBySide}
-            setSideBySide={(newVal) => setSideBySide(newVal)}
-          />
-          {restoredLoaded && sideBySide && (
-            <CompareSlider
-              original={originalPhoto!}
-              restored={restoredImage!}
-            />
-          )}
+        
           {status === 'loading' ? (
             <div className="max-w-[670px] h-[250px] flex justify-center items-center">
               <Rings
@@ -163,10 +267,28 @@ const Home: NextPage = () => {
                 ariaLabel="rings-loading"
               />
             </div>
-          ) : status === 'authenticated' && !originalPhoto ? (
-            <UploadDropZone />
+          ) : status === 'authenticated'  ? (
+            <div className="flex flex-col items-center space-y-6">
+              <div className="flex flex-row items-center space-x-6">
+                <YouDropZone caption={'Image of You'} />
+                <span style={{ fontSize: '2rem', fontWeight: 'bold' }}>+</span>
+                <ClothingDropZone caption={'Image of Clothing'} />
+                <span style={{ fontSize: '2rem', fontWeight: 'bold' }}>=</span>
+                <Result/>
+              </div>
+              {you && clothing &&  (
+                <button 
+                  onClick={() => {
+                    setError(null);
+                    generatePhoto(you, clothing);
+                  }}
+                  className="bg-black rounded-full text-white font-medium px-4 py-2 mt-20 hover:bg-black/80 transition">
+                  Go!
+                </button>
+              )}
+            </div>
           ) : (
-            status === 'unauthenticated' && !originalPhoto && (
+            status === 'unauthenticated' && !you && (
               <div className="h-[250px] flex flex-col items-center space-y-6 max-w-[670px] -mt-8">
                 <div className="max-w-xl text-gray-600">
                   Sign in below with Google to create a free account and start designing your dream room!
@@ -186,89 +308,20 @@ const Home: NextPage = () => {
               </div>
             )
           )}
-          {originalPhoto && !restoredImage && (
-              <Image
-                alt="original photo"
-                src={originalPhoto}
-                className="rounded-2xl"
-                width={400}
-                height={400}
-              />
-          )}
-          {status === 'authenticated' && (
-          <div>
-          <label htmlFor="textInput"></label>
-            <input
-              type="text"
-              id="textInput"
-              value={prompt} // Controlled input
-              onChange={handlePrompt} // Update state on change
-              placeholder=" Describe your redesign..."
-              style={{ width: '350px', height: '40px', fontSize: '16px', border: '1px solid #ccc', marginTop: '15px', padding: '10px'}}
-           />
-          </div>
-          )}
-        
+         
     
 
-        {originalPhoto && prompt && (
-          <button 
-            onClick={() => {
-              setError(null);
-              generatePhoto(originalPhoto, prompt);
-            }}
-            className="bg-black rounded-full text-white font-medium px-4 py-2 mt-4 hover:bg-black/80 transition">
-            Go!
-          </button>
-        )}
 
-          {restoredImage && originalPhoto && !sideBySide && (
+
+
+          {error && you && !sideBySide && (
             <div className="flex sm:space-x-4 sm:flex-row flex-col">
               <div>
-                <h2 className="mb-1 font-medium text-lg">Original Photo</h2>
-                <Image
-                  alt="original photo"
-                  src={originalPhoto}
-                  className="rounded-2xl relative"
-                  width={475}
-                  height={475}
-                />
-              </div>
-              <div className="sm:mt-0 mt-8">
-                <h2 className="mb-1 font-medium text-lg">Restored Photo</h2>
-                <a href={restoredImage} target="_blank" rel="noreferrer">
-                  <Image
-                    alt="restored photo"
-                    src={restoredImage}
-                    className="rounded-2xl relative sm:mt-0 mt-2 cursor-zoom-in"
-                    width={475}
-                    height={475}
-                    onLoadingComplete={() => setRestoredLoaded(true)}
-                  />
-                </a>
-              </div>
-            </div>
-          )}
-
-          {error && originalPhoto && !sideBySide && (
-            <div className="flex sm:space-x-4 sm:flex-row flex-col">
-              <div>
-
                 <h2 className="mb-1 font-medium text-lg mt-8">Failed to process image — try again!</h2>
               </div>
             </div>
           )}
 
-          {loading && (
-            <button
-              disabled
-              className="bg-black rounded-full text-white font-medium px-4 pt-2 pb-3 mt-8 hover:bg-black/80 w-40"
-            >
-              <span className="pt-4">
-                <LoadingDots color="white" style="large" />
-              </span>
-            </button>
-          )}
           {data &&data.remainingGenerations <= 0 && (
             <div
               className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mt-8 max-w-[575px]"
@@ -282,31 +335,6 @@ const Home: NextPage = () => {
               </div>
             </div>
           )}
-          <div className="flex space-x-2 justify-center">
-            {originalPhoto && !loading && (
-              <button
-                onClick={() => {
-                  setOriginalPhoto(null);
-                  setRestoredImage(null);
-                  setRestoredLoaded(false);
-                  setError(null);
-                }}
-                className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-6 hover:bg-gray-100 transition"
-              >
-                Upload New Photo
-              </button>
-            )}
-            {restoredLoaded && (
-              <button
-                onClick={() => {
-                  downloadPhoto(restoredImage!, appendNewToName(photoName!));
-                }}
-                className="bg-white rounded-full text-black border font-medium px-4 py-2 mt-6 hover:bg-gray-100 transition"
-              >
-                Download Restored Photo
-              </button>
-            )}
-          </div>
         </div>
       </main>
       <Footer />

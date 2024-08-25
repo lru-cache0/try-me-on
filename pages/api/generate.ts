@@ -8,8 +8,8 @@ import prisma from "../../lib/prismadb";
 type Data = string;
 interface ExtendedNextApiRequest extends NextApiRequest {
   body: {
-    imageUrl: string;
-    prompt: string;
+    youUrl: string;
+    clothingUrl: string;
   };
 }
 
@@ -91,12 +91,10 @@ export default async function handler(
   */
 
   //const versionId = "76604baddc85b1b4616e1c6475eca080da339c8875bd4996705440484a6eac38";
-  const versionId = "854e8727697a057c525cdb45ab037f64ecca770a1769cc52287c2e56472a247b";
-  const imageUrl = req.body.imageUrl;
-  const prompt = req.body.prompt;
-  const negativePrompt = "illustration, painting, cartoon, worst quality, low quality, lowres, watermark, banner, logo, watermark, contactinfo, text, deformed, blurry, blur, out of focus, out of frame, surreal, extra, ugly, upholstered walls, fabric walls, plush walls, mirror, mirrored, functional";
-  const aPrompt = "pinterest, room, bedroom, bathroom, kitchen, dining room, realistic, cinematic photo, highly detailed, cinematic lighting, ultra-detailed, ultrarealistic, photorealism, 8k., masterpiece, cinematic light, ultrarealistic+, photorealistic+, 8k, raw photo, realistic, hyperrealistic, highest quality, best quality, highly detailed, masterpiece, best quality, extremely detailed 8k wallpaper, masterpiece, best quality, ultra-detailed, best shadow, detailed background, high contrast, best illumination, detailed face, dulux, caustic, dynamic angle, detailed glow. dramatic lighting, highly detailed, insanely detailed hair, symmetrical, intricate details, professionally retouched, 8k high definition. strong bokeh. award winning photo.";
-  const timeoutDuration = 14000;
+  const versionId = "906425dbca90663ff5427624839572cc56ea7d380343d13e2a4c4b09d3f0c30f";
+  const garm_img = req.body.clothingUrl;
+  const human_img = req.body.youUrl;
+
   
   // POST request to Replicate to start the image restoration generation process
   let startResponse = await fetch("https://api.replicate.com/v1/predictions", {
@@ -107,7 +105,7 @@ export default async function handler(
     },
     body: JSON.stringify({
       version: versionId,
-      input: { image: imageUrl, prompt: prompt, n_prompt: negativePrompt, a_prompt: aPrompt},
+      input: { garm_img, human_img, garment_des: "denim jorts"},
     }),
   });
 
