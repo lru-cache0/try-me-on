@@ -27,7 +27,7 @@ const Home: NextPage = () => {
         </h1>
 
         <p className="mx-auto mt-3 max-w-xl text-lg text-slate-700 leading-7">
-          Just upload a photo of you and the piece you want to try!
+          Online shopping sucks cuz you can't try stuff on — until now!
         </p>
 
         <div className="flex justify-center space-x-4">
