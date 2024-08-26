@@ -323,7 +323,7 @@ const Home: NextPage = () => {
             </div>
           )}
 
-          {data &&data.remainingGenerations <= 0 && (
+          {data &&data.remainingGenerations <= 0 && you && clothing && (
             <div
               className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mt-8 max-w-[575px]"
               role="alert"
