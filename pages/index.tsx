@@ -16,8 +16,7 @@ const Home: NextPage = () => {
       </Head>
       <Header />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mb-7 ">
-              
-     
+
 
         <h1 className="mx-auto max-w-3xl font-display text-5xl font-bold tracking-normal text-slate-900 sm:text-6xl mt-20">
           <span className="relative whitespace-nowrap text-[#b3209c]">
@@ -51,12 +50,11 @@ const Home: NextPage = () => {
  
         </div>
         
-
- 
       </main>
       <Footer />
     </div>
   );
 };
 
-export default Home; //okay!
+export default Home; //okay! 
+
