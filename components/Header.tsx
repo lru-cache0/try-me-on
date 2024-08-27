@@ -23,7 +23,7 @@ export default function Header({ photo, gens }: HeaderProps) {
       </Link>
 
       <Link
-        href="/buy-credits"
+        href="/buy-credits" //98
         className="flex space-x-2 hover:text-blue-400 transition"
       >
         <div>Buy Credits</div>
