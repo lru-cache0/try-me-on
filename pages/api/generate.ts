@@ -105,7 +105,7 @@ export default async function handler(
     },
     body: JSON.stringify({
       version: versionId,
-      input: { garm_img, human_img, garment_des: "dress"},
+      input: { garm_img, human_img, garment_des: "dress", category: "dress" },
     }),
   });
 
